@@ -1,47 +1,60 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="eval.newApp.modele.supplier.Supplier" %>
+<%@ page import="eval.newApp.modele.supplier.SupplierQuotationItemDto" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Liste des Fournisseurs - ERPStyle</title>
+  <title>Items du Devis Fournisseur</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 <jsp:include page="sidebar.jsp" />
   <div class="list-box">
-    <h2>Fournisseurs</h2>
+    <h2>Items du Devis Fournisseur</h2>
 
     <table class="supplier-table">
       <thead>
         <tr>
-          <th>Nom</th>
-          <th>Groupe</th>
-          <th>Pays</th>
-          <th>Type</th>
+          <th>id article</th>
+          <th>Nom de l’article</th>
+          <th>Quantité</th>
+          <th>Prix unitaire</th>
+          <th>Description</th>
+          <th>Devis fournisseur</th>
+          <th>Fournisseur</th>
           <th>action</th>
         </tr>
       </thead>
       <tbody>
         <%
-          List<Supplier> suppliers = (List<Supplier>) request.getAttribute("suppliers");
-          if (suppliers != null) {
-              for (Supplier supplier : suppliers) {
+          List<SupplierQuotationItemDto> items = (List<SupplierQuotationItemDto>) request.getAttribute("items");
+          if (items != null && !items.isEmpty()) {
+              for (SupplierQuotationItemDto item : items) {
         %>
         <tr>
-          <td><%= supplier.getSupplierName() %></td>
-          <td><%= supplier.getSupplierGroup() %></td>
-          <td><%= supplier.getCountry() %></td>
-          <td><%= supplier.getSupplierType() %></td>
-          <td><a href="<%= request.getContextPath() %>/listeSupplierQuotation?supplier=<%= supplier.getSupplierName() %>"><button>voir les devis</button></a></td>
+        <td><%= item.getId() %></td>
+          <td><%= item.getItemName() %></td>
+          <td><%= item.getQuantity() %></td>
+          <td><%= item.getUnitPrice() %></td>
+          <td><%= item.getDescription() %></td>
+          <td><%= item.getSupplierQuotationName() %></td>
+          <td><%= item.getSupplierName() %></td>
+          <td>
+              <form method="post" action="<%= request.getContextPath() %>/update-price">
+                  <input type="hidden" name="quotation" value="<%= item.getSupplierQuotationName() %>" />
+                  <input type="hidden" name="item" value="<%= item.getId() %>" />
+                  <input type="number" name="price" step="0.01"  required />
+                  <button type="submit">Mettre à jour</button>
+              </form>
+          </td>
         </tr>
         <%
               }
           } else {
         %>
         <tr>
-          <td colspan="4">Aucun fournisseur trouvé.</td>
+          <td colspan="5">Aucun item trouvé pour ce devis fournisseur.</td>
         </tr>
         <%
           }
@@ -71,7 +84,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       border-radius: 6px;
       width: 100%;
-      max-width: 800px;
+      max-width: 900px;
       padding: 30px;
       box-sizing: border-box;
     }
