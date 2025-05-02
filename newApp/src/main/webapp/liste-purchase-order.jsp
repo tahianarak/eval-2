@@ -1,50 +1,51 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="eval.newApp.modele.supplier.Supplier" %>
+<%@ page import="eval.newApp.modele.purchaseOrder.PurchaseOrderWithInvoicesDTO" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Liste des Fournisseurs - ERPStyle</title>
+  <title>Liste des Bon de Commande - ERPStyle</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 <jsp:include page="sidebar.jsp" />
   <div class="list-box">
-    <h2>Fournisseurs</h2>
+    <h2>Bons de commande</h2>
 
     <table class="supplier-table">
       <thead>
         <tr>
-          <th>Nom</th>
-          <th>Groupe</th>
-          <th>Pays</th>
-          <th>Type</th>
-          <th>action</th>
+          <th>Référence</th>
+          <th>Fournisseur</th>
+          <th>Statut</th>
+          <th>Date</th>
+          <th>Total</th>
+          <th>recu</th>
+          <th>paye</th>
         </tr>
       </thead>
       <tbody>
         <%
-          List<Supplier> suppliers = (List<Supplier>) request.getAttribute("suppliers");
-          if (suppliers != null) {
-              for (Supplier supplier : suppliers) {
+          List<PurchaseOrderWithInvoicesDTO> orders = (List<PurchaseOrderWithInvoicesDTO>) request.getAttribute("orders");
+          if (orders != null && !orders.isEmpty()) {
+              for (PurchaseOrderWithInvoicesDTO order : orders) {
         %>
         <tr>
-          <td><%= supplier.getSupplierName() %></td>
-          <td><%= supplier.getSupplierGroup() %></td>
-          <td><%= supplier.getCountry() %></td>
-          <td><%= supplier.getSupplierType() %></td>
-          <td>
-            <a href="<%= request.getContextPath() %>/listeSupplierQuotation?supplier=<%= supplier.getSupplierName() %>"><button>voir les devis</button></a>
-            <a href="<%= request.getContextPath() %>/liste-orders?supplier=<%= supplier.getSupplierName() %>"><button>voir les commandes</button></a>
-          </td>
+          <td><%= order.getPurchaseOrderName() %></td>
+          <td><%= order.getSupplierName() %></td>
+          <td><%= order.getStatus() %></td>
+          <td><%= order.getTransactionDate() %></td>
+          <td><%= order.getGrandTotal() %> €</td>
+          <td><%= order.isRecu() %></td>
+          <td><%= order.isPaid() %> </td>
         </tr>
         <%
               }
           } else {
         %>
         <tr>
-          <td colspan="4">Aucun fournisseur trouvé.</td>
+          <td colspan="5">Aucun bon de commande trouvé.</td>
         </tr>
         <%
           }
@@ -74,7 +75,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       border-radius: 6px;
       width: 100%;
-      max-width: 800px;
+      max-width: 900px;
       padding: 30px;
       box-sizing: border-box;
     }

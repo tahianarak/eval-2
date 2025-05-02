@@ -5,7 +5,7 @@
   </div>
   <ul class="sidebar-menu">
     <li><a href="<%= request.getContextPath() %>/listeSupplier">liste des fournisseurs</a></li>
-    <li><a href="/produits"> Produits</a></li>
+    <li><a href="<%= request.getContextPath() %>/liste-supplier-invoice"> invoices</a></li>
     <li><a href="/logout"> Déconnexion</a></li>
   </ul>
 </div>

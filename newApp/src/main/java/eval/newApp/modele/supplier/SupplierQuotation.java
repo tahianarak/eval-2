@@ -8,6 +8,8 @@ public class SupplierQuotation {
     private String transaction_date;
     private Double total;
 
+    private String status;
+
     // Getters & Setters
     public String getName() {
         return name;
@@ -39,5 +41,13 @@ public class SupplierQuotation {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

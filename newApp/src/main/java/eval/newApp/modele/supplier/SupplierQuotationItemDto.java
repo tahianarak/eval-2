@@ -39,6 +39,8 @@ public class SupplierQuotationItemDto {
 
     private String itemName;
 
+
+
     public String getItemName() {
         return itemName;
     }
