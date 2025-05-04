@@ -106,7 +106,7 @@ public class SupplierService {
         // Paramètres de la requête
         String resource = "Supplier Quotation";
         String filters = "[[\"supplier\", \"=\", \"" + supplierName + "\"]]";  // Format JSON pour le filtre
-        String fields = "[\"name\", \"supplier\", \"transaction_date\", \"total\"]";  // Format JSON pour les champs
+        String fields = "[\"name\", \"supplier\", \"transaction_date\", \"total\",\"status\"]";  // Format JSON pour les champs
 
         // Construction de l'URL complète (sans l'encodage manuel de tous les paramètres)
         String url = String.format("%sapi/resource/%s?filters=%s&fields=%s",
@@ -129,6 +129,7 @@ public class SupplierService {
                 sq.setSupplier(node.path("supplier").asText(null));
                 sq.setTransaction_date(node.path("transaction_date").asText(null));
                 sq.setTotal(node.path("total").asDouble(0.0));
+                sq.setStatus(node.path("status").asText(null));
                 quotations.add(sq);
             }
             return quotations;

@@ -21,6 +21,7 @@
         <th>Fournisseur</th>
         <th>Date</th>
         <th>Total (€)</th>
+        <th>Etat</th>
         <th>action</th>
       </tr>
     </thead>
@@ -35,6 +36,7 @@
         <td><%= quotation.getSupplier() %></td>
         <td><%= quotation.getTransaction_date() %></td>
         <td><%= quotation.getTotal() %></td>
+        <td><%= quotation.getStatus() %></td>
         <td><a href="<%= request.getContextPath() %>/listeSupplierQuotationItems?quotation=<%= quotation.getName() %>"><button>voir les details</button></a></td>
       </tr>
       <%
