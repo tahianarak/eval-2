@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import eval.newApp.modele.supplier.invoice.PurchaseInvoiceDTO;
+import eval.newApp.modele.supplier.invoice.PurchaseInvoiceItemDTO;
+import eval.newApp.modele.supplier.invoice.PurchaseInvoiceWithItemsDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,74 @@ public class InvoiceService{
 
     @Value("${erpnext.url}")
     String baseUrl;
+
+
+    public PurchaseInvoiceWithItemsDTO getInvoiceWithItems(String sid, String invoiceId) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        System.out.println("sid="+sid);
+        headers.add("Cookie", "sid=" + sid);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        // Récupérer la facture d'achat
+        String invoiceUrl = baseUrl + "/api/resource/Purchase Invoice/" + invoiceId;
+        ResponseEntity<String> invoiceResponse = restTemplate.exchange(invoiceUrl, HttpMethod.GET, request, String.class);
+
+        if (invoiceResponse.getStatusCode() != HttpStatus.OK) {
+            throw new Exception("Erreur récupération facture : " + invoiceResponse.getStatusCode());
+        }
+
+        JsonNode invoiceData = objectMapper.readTree(invoiceResponse.getBody()).get("data");
+
+        // Mappage manuel de la facture
+        PurchaseInvoiceDTO invoice = new PurchaseInvoiceDTO();
+        invoice.setName(invoiceData.path("name").asText(null));
+        invoice.setStatus(invoiceData.path("status").asText(null));
+        invoice.setOutstandingAmount(invoiceData.path("outstanding_amount").asDouble(0));
+        invoice.setSupplier(invoiceData.path("supplier").asText(null));
+        invoice.setPostingDate(objectMapper.treeToValue(invoiceData.path("posting_date"), Date.class));
+        invoice.setGrandTotal(invoiceData.path("grand_total").asDouble(0));
+
+        // Récupérer les items via l'API personnalisée
+        String itemsUrl = UriComponentsBuilder
+                .fromHttpUrl(baseUrl + "/api/method/ma_app.api.customer_api.get_invoice_items")
+                .queryParam("invoice_id", invoiceId)
+                .toUriString();
+
+        ResponseEntity<String> itemsResponse = restTemplate.exchange(itemsUrl, HttpMethod.GET, request, String.class);
+
+        if (itemsResponse.getStatusCode() != HttpStatus.OK) {
+            throw new Exception("Erreur récupération items : " + itemsResponse.getStatusCode());
+        }
+
+        // Récupérer et mapper les items
+        JsonNode itemsData = objectMapper.readTree(itemsResponse.getBody()).get("message");
+        List<PurchaseInvoiceItemDTO> items = new ArrayList<>();
+        for (JsonNode itemNode : itemsData) {
+            PurchaseInvoiceItemDTO item = new PurchaseInvoiceItemDTO();
+            item.setItemCode(itemNode.path("item_code").asText(null));
+            item.setItemName(itemNode.path("item_name").asText(null));
+            item.setDescription(itemNode.path("description").asText(null));
+            item.setQty(itemNode.path("qty").asDouble(0));
+            item.setRate(itemNode.path("rate").asDouble(0));
+            item.setAmount(itemNode.path("amount").asDouble(0));
+            item.setUom(itemNode.path("uom").asText(null));
+            item.setPurchaseOrder(itemNode.path("purchase_order").asText(null));
+            item.setPurchaseReceipt(itemNode.path("purchase_receipt").asText(null));
+
+            items.add(item);
+        }
+
+        // Regrouper dans un DTO enrichi
+        PurchaseInvoiceWithItemsDTO fullInvoice = new PurchaseInvoiceWithItemsDTO();
+        fullInvoice.setInvoice(invoice);
+        fullInvoice.setItems(items);
+
+        return fullInvoice;
+    }
+
+
+
 
     public void payPurchaseInvoice(String sid, String purchaseInvoiceName) throws Exception {
         // Étape 1 : Récupérer les infos de la facture
@@ -188,7 +258,7 @@ public class InvoiceService{
         String url = UriComponentsBuilder
                 .fromHttpUrl(baseUrl + "/api/resource/Purchase Invoice")
                 .queryParam("fields", "[\"name\",\"status\",\"outstanding_amount\",\"supplier\",\"posting_date\",\"grand_total\"]")
-                .queryParam("filters", "[[\"docstatus\",\"=\",\"1\"]]")
+         //       .queryParam("filters", "[[\"docstatus\",\"=\",\"1\"]]")
                 .build(false)  // Désactive l'expansion automatique des {variables}
                 .toUriString();
         System.out.println("URL: " + url);

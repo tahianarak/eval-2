@@ -10,6 +10,7 @@ public class SupplierQuotation {
 
     private String status;
 
+
     // Getters & Setters
     public String getName() {
         return name;
@@ -50,4 +51,6 @@ public class SupplierQuotation {
     public void setStatus(String status) {
         this.status = status;
     }
+
+
 }

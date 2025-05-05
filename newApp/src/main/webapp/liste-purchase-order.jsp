@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
+<%@ page import="eval.newApp.modele.*" %>
 <%@ page import="eval.newApp.modele.purchaseOrder.PurchaseOrderWithInvoicesDTO" %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -36,7 +37,7 @@
           <td><%= order.getSupplierName() %></td>
           <td><%= order.getStatus() %></td>
           <td><%= order.getTransactionDate() %></td>
-          <td><%= order.getGrandTotal() %> €</td>
+          <td><%= FormatUtil.formaterMontant(order.getGrandTotal()) %> €</td>
           <td><%= order.isRecu() %></td>
           <td><%= order.isPaid() %> </td>
         </tr>

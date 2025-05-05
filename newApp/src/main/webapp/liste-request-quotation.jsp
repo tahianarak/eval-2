@@ -1,45 +1,42 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="eval.newApp.modele.*" %>
-<%@ page import="eval.newApp.modele.supplier.SupplierQuotation" %>
+<%@ page import="eval.newApp.modele.RequestQuotation.RequestForQuotationDTO" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Liste des Devis Fournisseur - ERPStyle</title>
+  <title>Liste des RFQ du Fournisseur - ERPStyle</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 <jsp:include page="sidebar.jsp" />
 
 <div class="list-box">
-  <h2>Devis du fournisseur</h2>
+  <h2>Demandes de prix pour le fournisseur</h2>
 
   <table class="quotation-table">
     <thead>
       <tr>
         <th>Code</th>
-        <th>Fournisseur</th>
         <th>Date</th>
-        <th>Total (€)</th>
-        <th>État</th>
+        <th>Échéance</th>
+        <th>Statut</th>
         <th>Action</th>
       </tr>
     </thead>
     <tbody>
       <%
-        List<SupplierQuotation> quotations = (List<SupplierQuotation>) request.getAttribute("quotations");
-        if (quotations != null && !quotations.isEmpty()) {
-          for (SupplierQuotation quotation : quotations) {
+        List<RequestForQuotationDTO> rfqs = (List<RequestForQuotationDTO>) request.getAttribute("request");
+        if (rfqs != null && !rfqs.isEmpty()) {
+          for (RequestForQuotationDTO rfq : rfqs) {
       %>
       <tr>
-        <td><%= quotation.getName() %></td>
-        <td><%= quotation.getSupplier() %></td>
-        <td><%= quotation.getTransaction_date() %></td>
-        <td><%= FormatUtil.formaterMontant(quotation.getTotal()) %></td>
-        <td><%= quotation.getStatus() %></td>
+        <td><%= rfq.getName() %></td>
+        <td><%= rfq.getTransactionDate() %></td>
+        <td><%= rfq.getScheduleDate() %></td>
+        <td><%= rfq.getStatus() %></td>
         <td>
-          <a href="<%= request.getContextPath() %>/listeSupplierQuotationItems?quotation=<%= quotation.getName() %>">
+          <a href="<%= request.getContextPath() %>/liste-request-quotation-item?request=<%= rfq.getName() %>">
             <button>Voir les détails</button>
           </a>
         </td>
@@ -49,7 +46,7 @@
         } else {
       %>
       <tr>
-        <td colspan="6">Aucun devis trouvé pour ce fournisseur.</td>
+        <td colspan="5">Aucune demande de prix trouvée pour ce fournisseur.</td>
       </tr>
       <%
         }

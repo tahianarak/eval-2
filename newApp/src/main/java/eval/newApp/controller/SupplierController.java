@@ -73,6 +73,7 @@ public class SupplierController
             {
                 throw new Exception("pas de session valide");
             }
+            session.setAttribute("supplier",supplier);
             List<SupplierQuotation> quotations=supplierService.getQuotationsBySupplier(session.getAttribute("token").toString(),supplier);
             mv.addObject("quotations", quotations);
             return mv;

@@ -1,6 +1,9 @@
 package eval.newApp.controller;
 
 import eval.newApp.modele.supplier.invoice.PurchaseInvoiceDTO;
+import eval.newApp.modele.supplier.invoice.PurchaseInvoiceItemDTO;
+import eval.newApp.modele.supplier.invoice.PurchaseInvoicePdfGenerator;
+import eval.newApp.modele.supplier.invoice.PurchaseInvoiceWithItemsDTO;
 import eval.newApp.service.InvoiceService;
 import jakarta.jws.WebParam;
 import jakarta.servlet.http.HttpSession;
@@ -10,6 +13,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
@@ -30,6 +36,40 @@ public class InvoiceController {
             }
             sid=session.getAttribute("token").toString();
             invoiceService.payPurchaseInvoice(sid,facture);
+            return getListeFacture(session);
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            ModelAndView mvi=new ModelAndView("error");
+            mvi.addObject("error",e.getMessage());
+            return mvi;
+        }
+    }
+    @GetMapping("/pdf-facture")
+    public ModelAndView pdfFacture(@RequestParam("facture") String facture,HttpSession session)
+    {
+
+        try {
+            String sid=null;
+            if(session.getAttribute("token")==null)
+            {
+                throw new Exception("pas de session valide");
+            }
+            sid=session.getAttribute("token").toString();
+            PurchaseInvoiceWithItemsDTO invoiceItemDTO=invoiceService.getInvoiceWithItems(sid,facture);
+            byte[] pdf= PurchaseInvoicePdfGenerator.generatePdf(invoiceItemDTO);
+
+
+            // Crée le nom du fichier
+            String fileName = "facture_" + invoiceItemDTO.getInvoice().getName() + ".pdf";
+            Path outputPath = Paths.get("D:\\tahiana\\s6\\evaluation n2\\pdf", fileName);
+
+            // Écrit le fichier dans le système de fichiers
+            try (FileOutputStream fos = new FileOutputStream(outputPath.toFile())) {
+                fos.write(pdf);
+            }
             return getListeFacture(session);
 
         }

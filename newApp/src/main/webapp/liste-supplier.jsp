@@ -10,6 +10,7 @@
 </head>
 <body>
 <jsp:include page="sidebar.jsp" />
+
   <div class="list-box">
     <h2>Fournisseurs</h2>
 
@@ -20,7 +21,7 @@
           <th>Groupe</th>
           <th>Pays</th>
           <th>Type</th>
-          <th>action</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -35,8 +36,15 @@
           <td><%= supplier.getCountry() %></td>
           <td><%= supplier.getSupplierType() %></td>
           <td>
-            <a href="<%= request.getContextPath() %>/listeSupplierQuotation?supplier=<%= supplier.getSupplierName() %>"><button>voir les devis</button></a>
-            <a href="<%= request.getContextPath() %>/liste-orders?supplier=<%= supplier.getSupplierName() %>"><button>voir les commandes</button></a>
+            <a href="<%= request.getContextPath() %>/listeSupplierQuotation?supplier=<%= supplier.getSupplierName() %>">
+              <button class="btn primary">Voir les devis</button>
+            </a>
+            <a href="<%= request.getContextPath() %>/liste-orders?supplier=<%= supplier.getSupplierName() %>">
+              <button class="btn secondary">Voir les commandes</button>
+            </a>
+            <a href="<%= request.getContextPath() %>/liste-request-quotation?supplier=<%= supplier.getSupplierName() %>">
+                <button class="btn secondary">Quotation Request</button>
+            </a>
           </td>
         </tr>
         <%
@@ -44,7 +52,7 @@
           } else {
         %>
         <tr>
-          <td colspan="4">Aucun fournisseur trouvé.</td>
+          <td colspan="5">Aucun fournisseur trouvé.</td>
         </tr>
         <%
           }
@@ -74,7 +82,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       border-radius: 6px;
       width: 100%;
-      max-width: 800px;
+      max-width: 1000px;
       padding: 30px;
       box-sizing: border-box;
     }
@@ -104,10 +112,38 @@
       color: #333;
     }
 
+    .btn {
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .btn.primary {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .btn.primary:hover {
+      background-color: #45a049;
+    }
+
+    .btn.secondary {
+      background-color: #008CBA;
+      color: white;
+    }
+
+    .btn.secondary:hover {
+      background-color: #007bb5;
+    }
+
     .footer {
       text-align: center;
       font-size: 13px;
       color: #999;
+      margin-top: 20px;
     }
   </style>
 </body>

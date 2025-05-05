@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
+<%@ page import="eval.newApp.modele.*" %>
 <%@ page import="eval.newApp.modele.supplier.invoice.PurchaseInvoiceDTO" %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -37,16 +38,26 @@
         <td><%= invoice.getStatus() %></td>
         <td><%= invoice.getSupplier() %></td>
         <td><%= invoice.getPostingDate() != null ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(invoice.getPostingDate()) : "" %></td>
-        <td><%= String.format("%.2f", invoice.getGrandTotal()) %> €</td>
-        <td><%= String.format("%.2f", invoice.getOutstandingAmount()) %> €</td>
-        <td><a href="<%= request.getContextPath() %>/payer-facture?facture=<%= invoice.getName() %>"><button>payer en totalite</button></a></td>
+        <td><%= FormatUtil.formaterMontant( invoice.getGrandTotal()) %> €</td>
+        <td><%= FormatUtil.formaterMontant( invoice.getOutstandingAmount()) %> €</td>
+        <td>
+          <% if(!invoice.getStatus().equals("Paid") && !invoice.getStatus().equals("Draft")) { %>
+            <a href="<%= request.getContextPath() %>/payer-facture?facture=<%= invoice.getName() %>" style="text-decoration: none;">
+              <button class="full-width-btn">Payer en totalité</button>
+            </a>
+          <% } %>
+          <a href="<%= request.getContextPath() %>/pdf-facture?facture=<%= invoice.getName() %>" style="text-decoration: none;">
+               <button class="full-width-btn">exporter pdf</button>
+          </a>
+
+        </td>
       </tr>
       <%
           }
         } else {
       %>
       <tr>
-        <td colspan="6">Aucune facture trouvée.</td>
+        <td colspan="7">Aucune facture trouvée.</td>
       </tr>
       <%
         }
@@ -106,10 +117,33 @@
     color: #333;
   }
 
+  .full-width-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #3498db;
+    color: white;
+    text-align: center;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .full-width-btn:hover {
+    background-color: #2980b9;
+  }
+
   .footer {
     text-align: center;
     font-size: 13px;
     color: #999;
+    margin-top: 20px;
+  }
+  a .full-width-btn, a.full-width-btn {
+    text-decoration: none;
   }
 </style>
 

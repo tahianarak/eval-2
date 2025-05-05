@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
+<%@ page import="eval.newApp.modele.*" %>
 <%@ page import="eval.newApp.modele.supplier.SupplierQuotationItemDto" %>
 <!DOCTYPE html>
 <html lang="fr">
@@ -20,7 +21,6 @@
           <th>Nom de l’article</th>
           <th>Quantité</th>
           <th>Prix unitaire</th>
-          <th>Description</th>
           <th>Devis fournisseur</th>
           <th>Fournisseur</th>
           <th>action</th>
@@ -36,8 +36,7 @@
         <td><%= item.getId() %></td>
           <td><%= item.getItemName() %></td>
           <td><%= item.getQuantity() %></td>
-          <td><%= item.getUnitPrice() %></td>
-          <td><%= item.getDescription() %></td>
+          <td><%= FormatUtil.formaterMontant(item.getUnitPrice()) %></td>
           <td><%= item.getSupplierQuotationName() %></td>
           <td><%= item.getSupplierName() %></td>
           <td>
@@ -83,8 +82,8 @@
       border: 1px solid #e1e5eb;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       border-radius: 6px;
-      width: 100%;
-      max-width: 900px;
+      width: 170%;
+      max-width: 1050px;
       padding: 30px;
       box-sizing: border-box;
     }
